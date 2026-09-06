@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Browser Tab Title: Now only Priya Store's -->
+    <title>Priya Store's</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #800020; /* Royal Burgundy */
+            --gold: #b8860b;
+            --cream: #fffcf9;
+            --dark: #1a1a1a;
+            --sale-red: #d32f2f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--cream); color: var(--dark); overflow-x: hidden; }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--primary); font-weight: bold; text-decoration: none; }
+        .cart-icon { cursor: pointer; position: relative; font-size: 24px; color: var(--primary); }
+        #cart-count { position: absolute; top: -8px; right: -10px; background: var(--sale-red); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; border: 2px solid white; }
+
+        /* Hero Banner */
+        .hero {
+            height: 400px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://i.ibb.co/kVFPZkVx/962b83ff372d11e6468c89f7df81f922.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 45px; margin-bottom: 10px; }
+        .hero p { font-size: 18px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .offer-badge { background: var(--sale-red); padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-top: 15px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+
+        /* Product Grid */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #eee; position: relative; }
+        .card:hover { transform: translateY(-8px); }
+        .card img { width: 100%; height: 380px; object-fit: cover; cursor: pointer; }
+        .card-tag { position: absolute; top: 10px; right: 10px; background: var(--sale-red); color: white; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 4px; }
+        .card-info { padding: 15px; text-align: center; }
+        .price { font-size: 24px; font-weight: bold; color: var(--sale-red); }
+        .combo-text { font-size: 13px; color: #666; display: block; font-weight: 600; }
+        .btn-view { background: var(--primary); color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 10px;}
+
+        /* Modal Details */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: white; width: 100%; max-width: 900px; max-height: 90vh; border-radius: 15px; display: flex; overflow: hidden; position: relative; }
+        .modal-left { flex: 1; background: #f9f9f9; }
+        .modal-left img { width: 100%; height: 100%; object-fit: contain; }
+        .modal-right { flex: 1.2; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 30px; cursor: pointer; color: #333; z-index: 10; }
+        .offer-highlight { background: #fff3e0; border-left: 5px solid #ff9800; padding: 10px; font-weight: bold; color: #e65100; }
+
+        /* Cart Sidebar */
+        #cart-sidebar { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 20px rgba(0,0,0,0.2); z-index: 3000; transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
+        #cart-sidebar.active { right: 0; }
+        .cart-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; }
+
+        /* Policies Section Styling */
+        .policy-section { background: #1a1a1a; color: #eee; padding: 60px 5% 20px; margin-top: 60px; }
+        .policy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .policy-item { margin-bottom: 25px; }
+        .policy-item h4 { color: var(--gold); font-size: 18px; margin-bottom: 12px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px;}
+        .policy-item p { font-size: 14px; line-height: 1.7; color: #ccc; }
+        .footer-bottom { border-top: 1px solid #333; margin-top: 40px; padding-top: 20px; text-align: center; color: #777; font-size: 13px; }
+        
+        .wa-float { position: fixed; bottom: 25px; right: 25px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1000; text-decoration: none;}
+
+        @media (max-width: 768px) {
+            .modal-content { flex-direction: column; overflow-y: auto; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card img { height: 260px; }
+            #cart-sidebar { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">Priya Store's</a>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-bag"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </header>
+
+    <div class="hero">
+        <p>EXCLUSIVE COLLECTION</p>
+        <h1>MEGA COMBO SALE</h1>
+        <div class="offer-badge">BUY 2 GET 1 FREE!</div>
+        <h2 style="margin-top:15px; color:var(--gold)">Price: ₹799 For 3 Dresses</h2>
+    </div>
+
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 40px; font-family: 'Playfair Display', serif; color: var(--primary);">Exclusive Boutique Collection</h2>
+        <div class="grid" id="product-grid"></div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div class="modal" id="pModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-left"><img id="m-img" src=""></div>
+            <div class="modal-right">
+                <h2 id="m-title" class="m-title"></h2>
+                <div style="margin: 10px 0;">
+                    <span style="font-size: 28px; font-weight: bold; color: var(--sale-red);">₹799 Only</span>
+                    <span style="font-size: 13px; color: #666; display: block; font-weight: 600;">Price includes 3 Dresses (Buy 2 Get 1 Free)</span>
+                </div>
+                <div class="offer-highlight">
+                    <i class="fas fa-gift"></i> <b>MEGA OFFER:</b> Buy 2 items and get 1 more <b>FREE (Total 3 Dresses)</b>!
+                </div>
+                <p><b>Fabric:</b> Premium Grade Traditional Material</p>
+                <p><b>Description:</b> This elegant outfit is part of our special 2024 collection. High-quality fabric with intricate work as shown in photos.</p>
+                <button style="background: #ff9900; color: white; border: none; padding: 18px; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer;" onclick="addToCart()">Add Combo to Bag</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Bag -->
+    <div id="cart-sidebar">
+        <h3>Your Shopping Bag</h3>
+        <div id="cart-list" style="flex:1; overflow-y:auto; margin-top:15px;"></div>
+        <div style="border-top:2px solid #eee; padding-top:20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
+                <span>Subtotal:</span>
+                <span>₹<span id="total-val">0</span></span>
+            </div>
+            <p style="font-size: 12px; color: var(--sale-red); margin-top: 5px;">*Total includes Combo Offer of 3 Dresses for ₹799.</p>
+            <button onclick="sendOrder()" style="width:100%; background:#25D366; color:white; padding:15px; border:none; border-radius:8px; margin-top:20px; font-weight:bold; cursor:pointer;">
+                Order on WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Policy Section -->
+    <section class="policy-section">
+        <div class="policy-grid">
+            <div class="policy-item">
+                <h4><b>Terms & Conditions</b></h4>
+                <p>Welcome to Priya Store's. By placing an order, you agree to our terms. Please note that <b>Cash on Delivery (COD) is NOT possible</b>. All orders must be prepaid.</p>
+            </div>
+            <div class="policy-item">
+                <h4><b>Return Policy</b></h4>
+                <p>We care for your satisfaction. If you are not happy with your purchase, you can initiate a return within <b>7 Days</b> of delivery. Item must be unused.</p>
+            </div>
+            <div class="policy-item">
+                <h4><b>Exchange Policy</b></h4>
+                <p><b>Exchange is possible</b> if you receive a damaged product or have size issues. We will replace your dress quickly.</p>
+            </div>
+            <div class="policy-item">
+                <h4><b>Refund Policy</b></h4>
+                <p>Once your return is inspected, we will process your <b>Full Refund within 48 Hours</b> to your original payment method.</p>
+            </div>
+            <div class="policy-item">
+                <h4><b>Shipping & Delivery</b></h4>
+                <p>Enjoy <b>FAST DELIVERY</b> across India. Your order will reach you within 3-5 business days. We provide <b>All India FREE Delivery</b>!</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Priya Store's | WhatsApp: +91 8740849565</p>
+            <p>Quality and Trust Guaranteed.</p>
+        </div>
+    </section>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/918740849565" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <script>
+        const productsList = [
+            { id: 1, name: "Royal Purple Gota Patti Set", img: "https://i.ibb.co/9kXRC2VG/IMG-20260906-WA0039.jpg" },
+            { id: 2, name: "Magenta Silk Designer Suit", img: "https://i.ibb.co/h1VpQQhc/IMG-20260906-WA0036.jpg" },
+            { id: 3, name: "Traditional Ethnic Magenta Choli", img: "https://i.ibb.co/qMGV8hF7/IMG-20260906-WA0034.jpg" },
+            { id: 4, name: "Navy Blue Golden Shimmer Dress", img: "https://i.ibb.co/PzT5vSnt/IMG-20260906-WA0031.jpg" },
+            { id: 5, name: "Classic Red Bridal Collection", img: "https://i.ibb.co/h14vtFmv/IMG-20260906-WA0029.jpg" },
+            { id: 6, name: "Forest Green Layered Chaniya Choli", img: "https://i.ibb.co/JRhJz124/IMG-20260906-WA0027.jpg" },
+            { id: 7, name: "Kutchi Style Multicolor Set", img: "https://i.ibb.co/xq8w7w00/IMG-20260906-WA0026.jpg" },
+            { id: 8, name: "Golden Beige Premium Lehenga", img: "https://i.ibb.co/wZBk0Ypp/IMG-20260906-WA0025.jpg" },
+            { id: 9, name: "Midnight Black Mirror Set", img: "https://i.ibb.co/mCjpwn4H/IMG-20260906-WA0021.jpg" },
+            { id: 10, name: "Sunlight Yellow Festive Dress", img: "https://i.ibb.co/9kcmWf1r/IMG-20260906-WA0022.jpg" },
+            { id: 11, name: "White & Blue Contrast Designer", img: "https://i.ibb.co/mC8hFH9Q/IMG-20260906-WA0023.jpg" },
+            { id: 12, name: "Peacock Blue Patchwork Choli", img: "https://i.ibb.co/HDVPSfWv/IMG-20260906-WA0024.jpg" },
+            { id: 13, name: "Heavy Maroon Zari Wedding Wear", img: "https://i.ibb.co/m57JQmV2/IMG-20260906-WA0020.jpg" },
+            { id: 14, name: "Digital Printed Silk Collection", img: "https://i.ibb.co/mCdCymbq/IMG-20260906-WA0019.jpg" },
+            { id: 15, name: "Peach Net Embroidery Special", img: "https://i.ibb.co/hFRTprnr/IMG-20260906-WA0018.jpg" },
+            { id: 16, name: "Black Mirror Magic Ethnic Wear", img: "https://i.ibb.co/cctt32ZL/IMG-20260906-WA0017.jpg" },
+            { id: 17, name: "Bright Yellow Bandhani Special", img: "https://i.ibb.co/LXzXbcCt/IMG-20260906-WA0013.jpg" },
+            { id: 18, name: "Pastel Green Designer Organza", img: "https://i.ibb.co/0VywJyPh/IMG-20260906-WA0014.jpg" },
+            { id: 19, name: "Sky Blue Party Wear Sequence", img: "https://i.ibb.co/Q7mhqVmp/IMG-20260906-WA0015.jpg" },
+            { id: 20, name: "Glitter Heavy Sequence Net", img: "https://i.ibb.co/fd7fnrFT/IMG-20260906-WA0016.jpg" },
+            { id: 21, name: "Jaipur Style Orange Bandhani", img: "https://i.ibb.co/Y46XscwH/IMG-20260906-WA0012.jpg" },
+            { id: 22, name: "Thread Work Classic Silk", img: "https://i.ibb.co/5gTrMFmq/IMG-20260906-WA0011.jpg" },
+            { id: 23, name: "Simple Soft Cotton Heritage", img: "https://i.ibb.co/7NzmbMDG/IMG-20260906-WA0010.jpg" },
+            { id: 24, name: "Festive Patola Silk Blend", img: "https://i.ibb.co/Xfvg7tqh/IMG-20260906-WA0009.jpg" },
+            { id: 25, name: "Ruffle Designer Pink Choli", img: "https://i.ibb.co/4nWtnF4J/IMG-20260906-WA0006.jpg" },
+            { id: 26, name: "Art Silk Gota Border Set", img: "https://i.ibb.co/Rkg9vwWw/IMG-20260906-WA0007.jpg" },
+            { id: 27, name: "Multicolor Embroidery Silk Mix", img: "https://i.ibb.co/m5t2sJqH/IMG-20260906-WA0008.jpg" },
+            { id: 28, name: "Premium Purple Zari Choli", img: "https://i.ibb.co/kVFPZkVx/962b83ff372d11e6468c89f7df81f922.jpg" },
+            { id: 29, name: "Multicolor Designer Silk Flare", img: "https://i.ibb.co/jvzc87Bc/76221f09b3c52872973160233b1297e0.jpg" },
+            { id: 30, name: "Black Mirror Heritage Collection", img: "https://i.ibb.co/Xr76hgHk/a5684e7f6471347d119d9f9f64c7a934.jpg" },
+            { id: 31, name: "Pastel Blue Flower Embroidery", img: "https://i.ibb.co/B58jbzS7/70362c01b1242651a88b15e4b6263908.jpg" },
+            { id: 32, name: "Traditional Red Bridal Set", img: "https://i.ibb.co/W4CzfydJ/2bc3df3c4c3f717c91801c20769f3cf3.jpg" },
+            { id: 33, name: "Deep Maroon Zardosi Luxury", img: "https://i.ibb.co/spMmghCw/988f95b68f48432d32f7c59ed2baa3a8.jpg" },
+            { id: 34, name: "Teal Green Silk Wedding Wear", img: "https://i.ibb.co/VpYdHgKm/4e885a2604573162522d7a8ef6d7082a.jpg" },
+            { id: 35, name: "Sunshine Yellow Gota Chaniya", img: "https://i.ibb.co/m52sh5f6/b964189157a53afca28aa817fcb4fec5.jpg" },
+            { id: 36, name: "White Pearl Designer Net Set", img: "https://i.ibb.co/TBnjZDvK/dd7201217f7406b5fc49fe2c9fff0802.jpg" },
+            { id: 37, name: "Rose Pink Thread Work Silk", img: "https://i.ibb.co/SwL0CfMX/6c50870caf6779fbf964fa100b818710.jpg" },
+            { id: 38, name: "Golden Cream Tissue Reception", img: "https://i.ibb.co/kg5GfvMD/7cab8a8ed4b9e53a8c0b4873866e5481.jpg" },
+            { id: 39, name: "Navratri Special Patola Blend", img: "https://i.ibb.co/C3J9zYjT/59c6a78383793fae66085c39871f34cf.jpg" },
+            { id: 40, name: "Sea Green Sequence Party Set", img: "https://i.ibb.co/MDQkYCP1/609a8063c1b29046ce4ef72427d6be57.jpg" },
+            { id: 41, name: "Orange Bandhani Silk Flare", img: "https://i.ibb.co/YsMy2WS/d1cd3b239e560a545acb4e2d72fcaaa6.jpg" },
+            { id: 42, name: "Forest Green Heavy Zari Choli", img: "https://i.ibb.co/cSstZMKf/be081dc1f275cc15ca91400dbcc8e111.jpg" },
+            { id: 43, name: "Silver Grey Glitter Net Gown", img: "https://i.ibb.co/8ggjFB1w/81abd091496cce001ba3c85f4c1b7b1e.jpg" },
+            { id: 44, name: "Multicolor Patchwork Ethnic", img: "https://i.ibb.co/99KwsW8x/26f48d006af7b37d7ccbce2124e0138c.jpg" },
+            { id: 45, name: "Wine Velvet Royal Bridal Gown", img: "https://i.ibb.co/QFGFWVZv/0718e5fc79bc20f98347577eb2aedd6b.jpg" },
+            { id: 46, name: "Peach Sequence Floral Net", img: "https://i.ibb.co/LD5LC4tB/39ce327c27ccbb5295b234f2f1d551e3.jpg" },
+            { id: 47, name: "Sky Blue Mirror Rayon Choli", img: "https://i.ibb.co/NdVPKDGM/cfa8ba87baaafdbe8624ad15c66ee1af.jpg" },
+            { id: 48, name: "Pastel Pink Ruffle Designer", img: "https://i.ibb.co/TBwWjhMV/b4d50d07157a0679e2f01f68e17593d4.jpg" },
+            { id: 49, name: "Yellow Heritage Bandhani Silk", img: "https://i.ibb.co/b5y7swGb/726e83fbd0bd512959ae38f90417e6c2.jpg" },
+            { id: 50, name: "Royal Purple Zari Embroidery", img: "https://i.ibb.co/zWrMhQCs/7c7eb6afab9fb958ee54a04e0510b609.jpg" },
+            { id: 51, name: "Modern Digital Print Satin", img: "https://i.ibb.co/B2XzYbZ9/1573bb78cdf5c14084c66981f971b33f.jpg" },
+            { id: 52, name: "Teal Green Full Sequence Net", img: "https://i.ibb.co/cKVXM0BV/9c2550025a816927b2b39af91d82a497.jpg" },
+            { id: 53, name: "Classic Maroon Gota Border", img: "https://i.ibb.co/mVzjsRkF/25d99bf91f39bf9c9f30410df3ce78b7.jpg" },
+            { id: 54, name: "Vibrant Multicolor Festival Flare", img: "https://i.ibb.co/d0pC08Jr/1226788a718cbe0e8dc77e2b1faba0ed.jpg" },
+            { id: 55, name: "White Sequence Dream Wedding", img: "https://i.ibb.co/N4p7GMG/76c138ef1bd2e6963b5b84b9e22175d1.jpg" },
+            { id: 56, name: "Emerald Green Antique Velvet", img: "https://i.ibb.co/zhvh8vPW/304c1272404a62664222c4d43d08fa76.jpg" },
+            { id: 57, name: "Peach Silk Gota Patti Classic", img: "https://i.ibb.co/fzqzrMBV/c06fc637c4e5d505f966cfa6cb3b4250.jpg" },
+            { id: 58, name: "Midnight Blue Party Night Net", img: "https://i.ibb.co/DPvhDs10/e0057b2d1257db95f5a3951369f5113c.jpg" },
+            { id: 59, name: "Red & White Traditional Heritage", img: "https://i.ibb.co/ynH8VVt6/c958e05b0885a31cbbadef18e70c032f.jpg" },
+            { id: 60, name: "Lavender Pastel Organza Set", img: "https://i.ibb.co/bRqbWwRy/7869925af659e4cacaa5054ab869bbce.jpg" },
+            { id: 61, name: "Heavy Grey Zardosi Wedding Wear", img: "https://i.ibb.co/TD0TVXcy/51e9092f05eb3abee4af935ab1e94c33.jpg" },
+            { id: 62, name: "Aqua Blue Shimmer Sequence Flare", img: "https://i.ibb.co/fzHkYtW2/f7902657b164a4539c58da7501609664.jpg" },
+            { id: 63, name: "Dark Purple Bandhani Ethnic Set", img: "https://i.ibb.co/V0VsMbYQ/ddfd9c32e40a8297bf650e9a0fde9a79.jpg" },
+            { id: 64, name: "Mint Green Soft Net Embroidery", img: "https://i.ibb.co/svHrN8DY/4028d05eafbf660759a32a7394239b36.jpg" },
+            { id: 65, name: "Golden Glow Luxury Reception", img: "https://i.ibb.co/hFvWkDZx/b702fec581164045d4e9526789d78d47.jpg" },
+            { id: 66, name: "Pink Mirror Work Garba Set", img: "https://i.ibb.co/fG2dNZYj/1582977ed7b8c1d2b2131b8ef7b1472d.jpg" },
+            { id: 67, name: "Heritage Black Gold Patola", img: "https://i.ibb.co/j9VKkZD2/ded62cbbdfb5a79fb85e851df272c218.jpg" }
+        ];
+
+        const products = productsList.map(p => ({ ...p, price: 799 }));
+        let cart = [];
+        let activeP = null;
+
+        const grid = document.getElementById('product-grid');
+        products.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+                <div class="card-tag">Buy 2 Get 1 Free</div>
+                <img src="${p.img}" onclick="showModal(${p.id})">
+                <div class="card-info">
+                    <h3>${p.name}</h3>
+                    <div style="margin:10px 0;">
+                        <span class="price">₹799</span>
+                        <span class="combo-text">Combo of 3 Dresses</span>
+                    </div>
+                    <button class="btn-view" onclick="showModal(${p.id})">View Offer</button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        function showModal(id) {
+            activeP = products.find(x => x.id === id);
+            document.getElementById('m-img').src = activeP.img;
+            document.getElementById('m-title').innerText = activeP.name;
+            document.getElementById('pModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() { document.getElementById('pModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
+
+        function addToCart() {
+            cart.push(activeP);
+            refreshCart();
+            closeModal();
+            toggleCart();
+        }
+
+        function refreshCart() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const list = document.getElementById('cart-list');
+            list.innerHTML = cart.map((p, i) => `
+                <div class="cart-item">
+                    <img src="${p.img}" style="width:50px; height:60px; object-fit:cover; border-radius:5px;">
+                    <div style="flex:1">
+                        <p style="font-size:12px; font-weight:bold">${p.name}</p>
+                        <p>₹799 (3 Dresses)</p>
+                    </div>
+                    <i class="fas fa-trash" onclick="remove(${i})" style="color:red; cursor:pointer"></i>
+                </div>
+            `).join('');
+            document.getElementById('total-val').innerText = cart.length * 799;
+        }
+
+        function remove(i) { cart.splice(i, 1); refreshCart(); }
+
+        function sendOrder() {
+            if (cart.length === 0) return alert("Your bag is empty!");
+            let msg = "Hello Priya Store's! I'm interested in the 3 for ₹799 Combo Offer:%0A%0A";
+            cart.forEach((p, i) => msg += `*Combo ${i+1}. ${p.name}*%0APrice: ₹799 (Total 3 Dresses)%0AImage: ${p.img}%0A%0A`);
+            msg += `*Final Amount: ₹${document.getElementById('total-val').innerText}*%0A%0APlease confirm.`;
+            window.open(`https://wa.me/918740849565?text=${msg}`, '_blank');
+        }
+
+        window.onclick = function(e) { if (e.target == document.getElementById('pModal')) closeModal(); }
+    </script>
+</body>
+</html>
